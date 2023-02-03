@@ -1,32 +1,55 @@
 import requests 
-from bs4 import BeautifulSoup 
+from bs4 import BeautifulSoup
+import re
+
+class Crawler:
+    def __init__(self,maxPages,urls=[]):
+        self.maxPages = maxPages
+        self.urlsToVisit = urls
+        self.visitedUrls = []
+    
+    def validUrl(self,url):
+        r = requests.get(url)
+        if r.status_code == 200:
+            soup = BeautifulSoup(r.content, "html.parser")
+            return soup
+        else : 
+            print(f"Erreur{r.status_code}.")
+            return None
+
+    def domainName(self,url):
+        domain = re.search(r"w?[a-v|x-z][\w%\+-\.](org|fr|com|net)", url)
+        domainSite = domain.group()
+        return domainSite
 
 
-baseUrl = 'https://www.azureva-vacances.com'
-uri = "jsp encore"
+    def getInternalUrls(self,url):
+        html = self.validUrl(url)
+        #print(html)
+        domainSite = self.domainName(url)
 
+        for links in html.find_all('a'):
+            if 'href'  in links.attrs:
+                if domainSite in links.attrs['href']:
+                    if 'page' in links.attrs['href']:
+                        if 'fr' in links.attrs['href']:
+                            if 'villages' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'sejour' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'vacances' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'clubs' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'residence' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'location' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'hebregements' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'location' in links.attrs['href']:
+                                print(links.attrs['href'])
+                            elif 'week' in links.attrs['href']:
+                                print(links.attrs['href'])
 
-response = requests.get(baseUrl + uri )
-
-
-
-#fonction qui permet de "crawler" sur mon site et recuperer tous les liens sur la page visée
-def process(swoup):
-    #ATTENTION, la suite de cette fonction ne marche que pour mon site, c'est un exemple
-    #l'exercice etant de refaire une fonction pour VOTRE site a scraper
-    ul = swoup.find('ul', { "class": "trackingContainer"})
-    lis = ul.findAll('li')
-    for li in lis:
-        a = li.find('a')
-        try:
-            print(baseUrl + a['href'])
-            requests.get(baseUrl + a['href'])
-        except:
-            pass  
-
-#si mon site renvoie un code HTTP 200 (OK)
-if response.ok:
-    #je passe le contenue html de ma page dans un "parser"
-    swoupGang = BeautifulSoup(response.text,'html.parser')
-    # execute mon parser dessus pour récuperer mes liens
-    print(swoupGang)
+Crawler(maxPages=2).getInternalUrls("https://www.azureva-vacances.com/fr/page/destination-vacances-azureva")
