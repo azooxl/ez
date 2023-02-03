@@ -28,28 +28,24 @@ class Crawler:
         #print(html)
         domainSite = self.domainName(url)
 
-        for links in html.find_all('a'):
-            if 'href'  in links.attrs:
+        for links in html.findAll('a'):
+            if 'href' in links.attrs:
                 if domainSite in links.attrs['href']:
-                    if 'page' in links.attrs['href']:
-                        if 'fr' in links.attrs['href']:
-                            if 'villages' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'sejour' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'vacances' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'clubs' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'residence' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'location' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'hebregements' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'location' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'week' in links.attrs['href']:
-                                print(links.attrs['href'])
+                    if 'villages' in links.attrs['href']:
+                        print(links.attrs['href'])
+                    elif 'sejour' in links.attrs['href']:
+                        print(links.attrs['href'])
+                    elif 'clubs' in links.attrs['href']:
+                        print(links.attrs['href'])
+                    elif 'residence' in links.attrs['href']:
+                        print(links.attrs['href'])
+                    elif 'location' in links.attrs['href']:
+                        print(links.attrs['href'])
+                    elif 'hebregements' in links.attrs['href']:
+                        print(links.attrs['href'])
+                    elif 'location' in links.attrs['href']:
+                        print(links.attrs['href'])
+                    elif 'week' in links.attrs['href']:
+                        print(links.attrs['href'])
 
-Crawler(maxPages=2).getInternalUrls("https://www.azureva-vacances.com/fr/page/destination-vacances-azureva")
+Crawler(maxPages=5).getInternalUrls("https://www.azureva-vacances.com/fr/page/destination-vacances-azureva")
