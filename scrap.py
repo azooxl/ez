@@ -1,53 +1,48 @@
 import requests 
 from bs4 import BeautifulSoup
-import re
 
-class Crawler:
-    def __init__(self,maxPages,urls=[]):
-        self.maxPages = maxPages
-        self.urlsToVisit = urls
-        self.visitedUrls = []
-    
-    def validUrl(self,url):
-        r = requests.get(url)
-        if r.status_code == 200:
-            soup = BeautifulSoup(r.content, "html.parser")
-            return soup
-        else : 
-            print(f"Erreur{r.status_code}.")
-            return None
-
-    def domainName(self,url):
-        domain = re.search(r"w?[a-v|x-z][\w%\+-\.](org|fr|com|net)", url)
-        domainSite = domain.group()
-        return domainSite
+def getAllPages():
+    urls = []
+    pageNumber = 1
 
 
-    def getInternalUrls(self,url):
-        html = self.validUrl(url)
-        #print(html)
-        domainSite = self.domainName(url)
+    for i in range(243):
+        i = f"https://www.citya.com/annonces/location/appartement{pageNumber}"
+        pageNumber += 1
+        urls.append(i)
 
-        for links in html.find_all('a'):
-            if 'href'  in links.attrs:
-                if domainSite in links.attrs['href']:
-                    if 'page' in links.attrs['href']:
-                        if 'fr' in links.attrs['href']:
-                            if 'villages' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'sejour' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'clubs' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'residence' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'location' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'hebregements' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'location' in links.attrs['href']:
-                                print(links.attrs['href'])
-                            elif 'week' in links.attrs['href']:
-                                print(links.attrs['href'])
 
-Crawler(maxPages=2).getInternalUrls("https://www.azureva-vacances.com/fr/page/destination-vacances-azureva")
+    return(urls)
+
+
+def parseJ(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, "html.parser")
+    appart = soup.find_all('div', class_="infos")
+
+    for jsp in appart:
+        try:
+            type = jsp.find('strong').text.strip()
+        except AttributeError as e:
+            type = ""
+        try:
+            ville = jsp.find('p', class_="ville").text.strip()
+        except AttributeError as e:
+            ville = ""
+        try:
+            prix = jsp.find('p', class_="prix").text.strip()
+        except AttributeError as e:
+            prix = ""
+        
+        with open('fichier.csv', "a", encoding="UTF8" )as f:
+            f.write(f"Nombre de pièces et surface habitable :  {type}\n")
+            f.write(f"Lieu :  {ville}\n")
+            f.write(f"Prix :  {prix}\n\n")
+
+
+def parseAll():
+    links = getAllPages()
+    for link in links:
+        parseJ(url=link)
+
+parseAll()
